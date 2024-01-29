@@ -23,11 +23,14 @@ interim population goals:
 
 For each species that has experienced long-term population declines, we
 construct two projection curves that represent alternative future
-pathways populations could take: 1) population declines continue at the
-same average rate as in the past, or 2) populations achieve a specified
-positive population growth at a specified point in the future, where the
-curve is chosen to represent a plausible and achievable trajectory
-towards recovery.
+pathways populations could take:
+
+1.  population declines continue at the same average rate as in the
+    past, or
+
+2.  populations achieve a specified positive population growth at a
+    specified point in the future, where the curve is chosen to
+    represent a plausible and achievable trajectory towards recovery.
 
 As new monitoring data is collected in the future, progress towards
 recovery can be measured by compared the observed population trajectory
