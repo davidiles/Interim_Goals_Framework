@@ -86,29 +86,30 @@ sp_results <- readRDS(filename)
 
 ``` r
 
-projection_function <- function(sp_results = sp_results,
-                                year_goals_are_set = 2022,# Year in which goals are set
-                                target_trend = 3,                                         # Percent change per year
-                                years_to_target_trend = 25,                               # Years until target is reached
-                                end_of_projection = 2100,                                 # Final year of projection
-                                baseline_years = seq(1980,1984),                         # Years for calculating baseline abundance (average across these years)
-                                length_current_trend = year_goals_are_set-1980){           # How far back to calculate "current" trend over)
-  
-  # Extract samples
-  samps <- sp_results$samps
-  year_seq <- colnames(samps) %>% as.numeric()
-  samps <- samps[,which(year_seq >= 1970)]
-  year_seq <- year_seq[which(year_seq >= 1970)]
-  
-  # Properties of data/projection (don't need to be modified)
-  final_year_of_data = max(year_seq)
-  year_seq_projection <- seq(year_seq[1],end_of_projection)
-  
-  # Empty objects to store estimates
-  samps_StatusQuo <- samps_Recovery <- samps_gam <- matrix(NA, nrow = nrow(samps), ncol = length(year_seq_projection))
-  Index_baseline <- Trend_samples <- c()
-}
+CCSP_proj <- projection_function(sp_results)
+
+# Plot indices
+
+CCSP_plot <- ggplot()+
+
+    geom_ribbon(data = na.omit(CCSP_proj$gam_summary), aes(x = Year, ymin = gam_q_0.025, ymax = gam_q_0.975), alpha = 0.4, fill = "gray50")+
+    geom_line(data = na.omit(CCSP_proj$gam_summary), aes(x = Year, y = gam_med), col = "gray50", linewidth = 1)+
+
+    # Observed indices
+    geom_errorbar(data = subset(CCSP_proj$indices_summarized, Year >= 1970 & Year <= CCSP_proj$final_year_of_data),aes(x = Year, ymin = Index_q_0.025, ymax = Index_q_0.975), width = 0, col = "gray30")+
+    geom_point(data = subset(CCSP_proj$indices_summarized, Year >= 1970  & Year <= CCSP_proj$final_year_of_data),aes(x = Year, y = Index), col = "gray30")+
+
+    ylab("Population Index")+
+    xlab("Year")+
+    theme_few()+
+    ggtitle(species_name)+
+    coord_cartesian(ylim=c(0,max(apply(CCSP_proj$samps,2,function(x) quantile(x, 0.975)))))+
+    scale_x_continuous(breaks = seq(1970,CCSP_proj$final_year_of_data,10))
+
+print(CCSP_plot)
 ```
+
+![](README_files/figure-markdown_github/CCSP_plot1-1.png)
 
 The following figure illustrates the estimated national annual indices
 for the species.
@@ -501,7 +502,6 @@ for (species_name in (target_species$Species)){
   
   # Trend goal for recovery trajectory
   recovery_trend_goal <- log(3/100 + 1)
-  
   
   # Save estimates of species trend
   trend_summary <- rbind(trend_summary,
