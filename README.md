@@ -90,6 +90,13 @@ Below, we plot the annual population indices for the species:
 
 ### Population projections
 
+Population projections require several key inputs:
+
+1.  An estimate of historical population trend, which describes the
+    average rate of population change populations have experienced over
+    the ‘long-term’
+2.  
+
 \[text goes here\]
 
 Annual population indices can also be expressed as a percentage of a
