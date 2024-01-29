@@ -92,10 +92,32 @@ Below, we plot the annual population indices for the species:
 
 Population projections require several key inputs:
 
-1.  An estimate of historical population trend, which describes the
-    average rate of population change populations have experienced over
-    the ‘long-term’
-2.  
+1.  **Historical trend**: An estimate of historical population trend,
+    which describes the average rate of population change populations
+    have experienced over the ‘long-term’. This is calculated directly
+    from the population indices that are generated from Bayesian
+    analysis of the dataset.
+
+-   test
+
+1.  **Year in which goals are set**: This is the date at which the
+    projection ‘begins’. After this date, progress towards recovery will
+    be evaluated. In these
+
+2.  **Target population trend**:
+
+3.  
+
+target_trend = 3,
+
+                                # Years until target growth rate is reached
+                                years_to_target_trend = 25, 
+                                
+                                # Final year of projection
+                                end_of_projection = 2100,  
+                                
+                                # Years for calculating baseline index (average across these years)
+                                baseline_years = seq(1980,1984), 
 
 \[text goes here\]
 
