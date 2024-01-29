@@ -96,30 +96,26 @@ Population projections require several key inputs:
     which describes the average rate of population change populations
     have experienced over the ‘long-term’. This is calculated directly
     from the population indices that are generated from Bayesian
-    analysis of the dataset.
+    analysis of the dataset. By default, we calculate the mean rate of
+    annual population change between 1980 and 2022, recognizing that
+    indices prior to 1980 are often highly uncertain and may be
+    unreliable.
 
-> > test
-
-1.  **Year in which goals are set**: This is the date at which the
+2.  **Year in which goals are set**: This is the date at which the
     projection ‘begins’. After this date, progress towards recovery will
-    be evaluated. In these
+    be evaluated. In these projections, we set goals in 2022.
 
-2.  **Target population trend**:
+3.  **Target population trend**: We set a goal of achieving annual
+    population growth rates of **+3% per year**. This is well within the
+    range of biologically possible growth rates for all species
+    considered, and is also within the range of observed rates of
+    increase for species that have experienced long-term population
+    increases.
 
-3.  
-
-target_trend = 3,
-
-                                # Years until target growth rate is reached
-                                years_to_target_trend = 25, 
-                                
-                                # Final year of projection
-                                end_of_projection = 2100,  
-                                
-                                # Years for calculating baseline index (average across these years)
-                                baseline_years = seq(1980,1984), 
-
-\[text goes here\]
+4.  **Years until target growth rate is achieved**: This relates to the
+    speed at which conservation action is expected to occur. We set an
+    aspirational goal of achieving target growth rates in 25 years
+    (2045).
 
 Annual population indices can also be expressed as a percentage of a
 historical baseline abundance. For the BBS, estimated indices prior to
