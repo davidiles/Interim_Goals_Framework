@@ -55,7 +55,6 @@ sp_code <- subset(ac, English_Name == species_name)$Species_ID
 # Directory where fitted model will be stored 
 filename <- paste0("fitted_models/",sp_code,".RDS")
 
-
 # Fit model for this species, save resulting indices
 if (!file.exists(filename)){
   
