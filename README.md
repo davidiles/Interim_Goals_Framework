@@ -88,6 +88,10 @@ Below, we plot the annual population indices for the species:
 
 ![](README_files/figure-markdown_github/CCSP_plot_1-1.png)
 
+### Population projections
+
+\[text goes here\]
+
 Annual population indices can also be expressed as a percentage of a
 historical baseline abundance. For the BBS, estimated indices prior to
 1980 are potentially unreliable because the program was still expanding.
