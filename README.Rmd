@@ -103,7 +103,7 @@ if (!file.exists(filename)){
   saveRDS(sp_results, file = filename)
 }
 
-readRDS(filename)
+sp_results <- readRDS(filename)
 ```
 
 ```{r projection_function}
