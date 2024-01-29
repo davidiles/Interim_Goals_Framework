@@ -96,15 +96,17 @@ Population projections require several key inputs:
     which describes the average rate of population change populations
     have experienced over the ‘long-term’. This is calculated directly
     from the population indices that are generated from Bayesian
-    analysis of the dataset. \>\> test
+    analysis of the dataset.
 
-2.  **Year in which goals are set**: This is the date at which the
+> > test
+
+1.  **Year in which goals are set**: This is the date at which the
     projection ‘begins’. After this date, progress towards recovery will
     be evaluated. In these
 
-3.  **Target population trend**:
+2.  **Target population trend**:
 
-4.  
+3.  
 
 target_trend = 3,
 
