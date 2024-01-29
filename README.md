@@ -38,6 +38,49 @@ to the projections.
 
 # Method description & case study
 
+We start by fitting a hierarchical population model to monitoring data
+for a focal species; in this case **Clay-colored Sparrow**. We
+accomplish this using the `bbsBayes2` R package for species monitored by
+the North American Breeding Bird Survey.
+
+The code below
+
+``` r
+
+species_name <- "Clay-colored Sparrow"
+
+# 4 letter species abbreviation code
+sp_code <- subset(ac, English_Name == species_name)$Species_ID
+
+# Directory where fitted model will be stored 
+filename <- paste0("fitted_models/",sp_code,".RDS")
+
+
+# Fit model for this species, save resulting indices
+if (!file.exists(filename)){
+  
+  # Stratify data
+  s <- stratify(by = "bbs_usgs", species = species_name)
+  
+  p <- tryCatch(expr = {prepare_data(s)},
+                error = function(e){NULL})
+  
+  # Fit model, generate indices
+  if (is.null(p)) next
+  
+  p <- prepare_data(s)
+  md <- prepare_model(p, model = "gamye")
+  m <- run_model(md, save_model = FALSE)
+  i <- generate_indices(model_output = m, regions = "country")
+  
+  samps <- i$samples$country_Canada
+  
+  sp_results <- list(samps = samps)
+  
+  saveRDS(sp_results, file = paste0("fitted_models/",sp_code,".RDS"))
+}
+```
+
 # Application to all species
 
 # Results summary
@@ -47,10 +90,6 @@ to the projections.
 The R code below was used to conduct analyses for all species.
 
 ``` r
-# Species names (avian core 2022)
-ac <- read_xlsx("data/1_Avian_Core_20220422_FULLVERSION.xlsx")
-
-target_species <- read_xlsx("data/species with long term declines (12dec2023).xlsx")
 
 # ------------------------------------------
 # Fit models for target species
@@ -104,7 +143,6 @@ for (species_name in (target_species$Species)){
   year_seq <- colnames(samps) %>% as.numeric()
   samps <- samps[,which(year_seq >= 1970)]
   year_seq <- year_seq[which(year_seq >= 1970)]
-  
   
   # --------------------------------------------------
   # Conduct population projections
