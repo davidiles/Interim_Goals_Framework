@@ -103,6 +103,9 @@ if (!file.exists(filename)){
   saveRDS(sp_results, file = filename)
 }
 
+```
+
+```{r read_CCSP_RDS, echo = FALSE}
 sp_results <- readRDS(filename)
 ```
 

@@ -80,8 +80,6 @@ if (!file.exists(filename)){
   sp_results <- list(samps = samps)
   saveRDS(sp_results, file = filename)
 }
-
-sp_results <- readRDS(filename)
 ```
 
 Below, we plot the annual population indices for the species:
