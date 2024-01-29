@@ -112,7 +112,7 @@ sp_results <- readRDS(filename)
 # This function summarizes empirical indices, and performs population projections
 # Output from this function is used for plotting trajectories
 # ---------------------------------------------
-    
+
 projection_function <- function(sp_results = sp_results,
                                 
                                 # Year in which goals are set
@@ -344,29 +344,57 @@ projection_function <- function(sp_results = sp_results,
 }
 ```
 
-```{r CCSP_plot1, cache = TRUE, fig.width=8, fig.height=6}
+Below, we plot the annual population indices for the species:
+
+```{r CCSP_plot_1, echo = FALSE, cache = TRUE, fig.width=8, fig.height=6}
 
 CCSP_proj <- projection_function(sp_results)
 
 # Plot indices
 
-CCSP_plot <- ggplot()+
+CCSP_plot_1 <- ggplot()+
+  
+  geom_ribbon(data = na.omit(CCSP_proj$gam_summary), aes(x = Year, ymin = gam_q_0.025, ymax = gam_q_0.975), alpha = 0.4, fill = "gray50")+
+  geom_line(data = na.omit(CCSP_proj$gam_summary), aes(x = Year, y = gam_med), col = "gray50", linewidth = 1)+
+  
+  # Observed indices
+  geom_errorbar(data = subset(CCSP_proj$indices_summarized, Year >= 1970 & Year <= CCSP_proj$final_year_of_data),aes(x = Year, ymin = Index_q_0.025, ymax = Index_q_0.975), width = 0, col = "gray30")+
+  geom_point(data = subset(CCSP_proj$indices_summarized, Year >= 1970  & Year <= CCSP_proj$final_year_of_data),aes(x = Year, y = Index), col = "gray30")+
+  
+  ylab("Population Index")+
+  xlab("Year")+
+  theme_few()+
+  ggtitle(species_name)+
+  coord_cartesian(ylim=c(0,max(apply(CCSP_proj$samps,2,function(x) quantile(x, 0.975)))))+
+  scale_x_continuous(breaks = seq(1970,CCSP_proj$final_year_of_data,10))
 
-    geom_ribbon(data = na.omit(CCSP_proj$gam_summary), aes(x = Year, ymin = gam_q_0.025, ymax = gam_q_0.975), alpha = 0.4, fill = "gray50")+
-    geom_line(data = na.omit(CCSP_proj$gam_summary), aes(x = Year, y = gam_med), col = "gray50", linewidth = 1)+
+print(CCSP_plot_1)
 
-    # Observed indices
-    geom_errorbar(data = subset(CCSP_proj$indices_summarized, Year >= 1970 & Year <= CCSP_proj$final_year_of_data),aes(x = Year, ymin = Index_q_0.025, ymax = Index_q_0.975), width = 0, col = "gray30")+
-    geom_point(data = subset(CCSP_proj$indices_summarized, Year >= 1970  & Year <= CCSP_proj$final_year_of_data),aes(x = Year, y = Index), col = "gray30")+
+```
 
-    ylab("Population Index")+
-    xlab("Year")+
-    theme_few()+
-    ggtitle(species_name)+
-    coord_cartesian(ylim=c(0,max(apply(CCSP_proj$samps,2,function(x) quantile(x, 0.975)))))+
-    scale_x_continuous(breaks = seq(1970,CCSP_proj$final_year_of_data,10))
+Annual population indices can also be expressed as a percentage of a historical baseline abundance.  For the BBS, estimated indices prior to 1980 are potentially unreliable because the program was still expanding.  Thus, we use the **average estimated index for the 5-year period from 1980-1984 as a baseline**.  The plot below illustrates the annual indices, expressed as a percentage of the **mean index from 1980-1984**:
 
-print(CCSP_plot)
+```{r CCSP_plot_2, echo = FALSE, cache = TRUE, fig.width=8, fig.height=6}
+
+# Plot indices
+CCSP_plot_2 <- ggplot()+
+  
+  # 100%
+  geom_hline(yintercept = 100, linetype = 2)+
+  
+  # Observed indices
+  geom_errorbar(data = subset(CCSP_proj$percent_change_summary_Obs,Year <= CCSP_proj$final_year_of_data), aes(x = Year, ymin = Obs_q_0.025, ymax = Obs_q_0.975), width = 0, col = "gray30")+
+  geom_point(data = subset(CCSP_proj$percent_change_summary_Obs, Year <= CCSP_proj$final_year_of_data), aes(x = Year, y = Obs_med), col = "gray30")+
+  
+  scale_x_continuous(breaks = seq(1970,CCSP_proj$final_year_of_data,10))+
+  
+  ylab("Percent of Baseline abundance")+
+  xlab("Year")+
+  ggtitle(species_name)+
+  coord_cartesian(ylim=c(0,200))+
+  theme_few()
+
+print(CCSP_plot_2)
 
 ```
 

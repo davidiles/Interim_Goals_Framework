@@ -84,32 +84,18 @@ if (!file.exists(filename)){
 sp_results <- readRDS(filename)
 ```
 
-``` r
+Below, we plot the annual population indices for the species:
 
-CCSP_proj <- projection_function(sp_results)
+![](README_files/figure-markdown_github/CCSP_plot_1-1.png)
 
-# Plot indices
+Annual population indices can also be expressed as a percentage of a
+historical baseline abundance. For the BBS, estimated indices prior to
+1980 are potentially unreliable because the program was still expanding.
+Thus, we use the **average estimated index for the 5-year period from
+1980-1984 as a baseline**. The plot below illustrates the annual
+indices, expressed as a percentage of the **mean index from 1980-1984**:
 
-CCSP_plot <- ggplot()+
-
-    geom_ribbon(data = na.omit(CCSP_proj$gam_summary), aes(x = Year, ymin = gam_q_0.025, ymax = gam_q_0.975), alpha = 0.4, fill = "gray50")+
-    geom_line(data = na.omit(CCSP_proj$gam_summary), aes(x = Year, y = gam_med), col = "gray50", linewidth = 1)+
-
-    # Observed indices
-    geom_errorbar(data = subset(CCSP_proj$indices_summarized, Year >= 1970 & Year <= CCSP_proj$final_year_of_data),aes(x = Year, ymin = Index_q_0.025, ymax = Index_q_0.975), width = 0, col = "gray30")+
-    geom_point(data = subset(CCSP_proj$indices_summarized, Year >= 1970  & Year <= CCSP_proj$final_year_of_data),aes(x = Year, y = Index), col = "gray30")+
-
-    ylab("Population Index")+
-    xlab("Year")+
-    theme_few()+
-    ggtitle(species_name)+
-    coord_cartesian(ylim=c(0,max(apply(CCSP_proj$samps,2,function(x) quantile(x, 0.975)))))+
-    scale_x_continuous(breaks = seq(1970,CCSP_proj$final_year_of_data,10))
-
-print(CCSP_plot)
-```
-
-![](README_files/figure-markdown_github/CCSP_plot1-1.png)
+![](README_files/figure-markdown_github/CCSP_plot_2-1.png)
 
 The following figure illustrates the estimated national annual indices
 for the species.
