@@ -310,13 +310,15 @@ for (species_name in target_species$Species){
 }
 ```
 
-# Results summary
+# Results summaries
+
+A full set of results were produced by the script `projection.R`.
 
 Tabular summaries of population projection results are stored in
 **/summary_tables/projection_table.csv**.
 
 Plots of projections for each species are stored in
-**/summary_figures/**:
+**/summary_figures/**.
 
 # Extensions
 

@@ -678,7 +678,7 @@ A full set of results were produced by the script `projection.R`.
 
 Tabular summaries of population projection results are stored in **/summary_tables/projection_table.csv**.
 
-Plots of projections for each species are stored in **/summary_figures/**:
+Plots of projections for each species are stored in **/summary_figures/**.
 
 ```{r species_projections_run, eval = FALSE, echo = FALSE, warnings = FALSE, messages = FALSE}
 
