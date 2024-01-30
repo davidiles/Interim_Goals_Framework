@@ -90,17 +90,17 @@ Below, we plot the annual population indices for the species:
 
 ### Population projections
 
-Starting in the year 2022, we set population goals that would lead each
-population towards recovery. Our analysis involves projecting
-hypothetical population trajectories forward in time, starting at the
-**current** rate of long-term population decline, ending in a **target**
-population growth rate after a defined number of years, and potentially
-continuing that trajectory until the population reaches full recovery.
+For each species, we construct projections of hypothetical trajectories
+that represent optimistic but achievable scenarios of population
+recovery. The projections begin with the **current** rate of long-term
+population decline, achieve a **target** population growth rate after a
+defined number of years, and potentially continue that trajectory until
+the population reaches full recovery.
 
-Projections are distinct from forecasts, and we do are not making
+Projections are distinct from forecasts, and we are **not** making
 predictions about the future state a population will likely achieve.
-Rather, we are describing an path towards recovery that we feel is
-reasonable, and which conservation actions should aim to achieve.
+Rather, we are describing a path towards recovery that is potentially
+achievable if conservation action is pursued.
 
 Population projections require several key inputs:
 
