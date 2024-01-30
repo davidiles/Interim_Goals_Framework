@@ -50,7 +50,11 @@ The code below fits the model for **Clay-colored Sparrow**:
 
 ``` r
 
+# Focal species
 species_name <- "Clay-colored Sparrow"
+
+# Species names and abbreviations (avian core 2022)
+ac <- read_xlsx("data/1_Avian_Core_20220422_FULLVERSION.xlsx")
 
 # 4 letter species abbreviation code
 sp_code <- subset(ac, English_Name == species_name)$Species_ID
@@ -203,7 +207,8 @@ This framework illustrates several key messages:
 We applied the framework to \_\_\_\_\_ species that are estimated to
 have experienced long-term population declines and are considered to be
 well-monitored by the Breeding Bird Survey. For each species, we set
-population goals in 2022 (the most recent year of BBS estimates).
+population goals starting in 2022 (the most recent year of BBS
+estimates).
 
 This involved:
 
@@ -213,10 +218,12 @@ This involved:
     growth rates would be increased by 0.5% per year until a target
     growth rate of +3% per year was achieved (after which, the
     projection continued growing at a rate of +3% per year)
-3.  Reporting the population status in 2050, if the population grew
-    according to the projection
-4.  Reporting the year in which ‘full recovery’ would be achieved, if
-    the population grew according to the projection.
+3.  Reporting the population status in 2050 (i.e., under the
+    hypothetical scenario where the population grew according to the
+    projection)
+4.  Reporting the year in which ‘full recovery’ would be achieved (i.e.,
+    under the hypothetical scenario where the population grew according
+    to the projection)
 
 Code to accomplish this is included below:
 

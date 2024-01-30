@@ -58,9 +58,6 @@ library(mgcv)
 library(readxl)
 library(ggthemes)
 
-# Species names (avian core 2022)
-ac <- read_xlsx("data/1_Avian_Core_20220422_FULLVERSION.xlsx")
-
 target_species <- read_xlsx("data/species with long term declines (12dec2023).xlsx")
 
 ```
@@ -74,7 +71,11 @@ The code below fits the model for **Clay-colored Sparrow**:
 
 ```{r CCSP_fit, cache = TRUE}
 
+# Focal species
 species_name <- "Clay-colored Sparrow"
+
+# Species names and abbreviations (avian core 2022)
+ac <- read_xlsx("data/1_Avian_Core_20220422_FULLVERSION.xlsx")
 
 # 4 letter species abbreviation code
 sp_code <- subset(ac, English_Name == species_name)$Species_ID
@@ -137,7 +138,7 @@ projection_function <- function(sp_results = NULL,
                                 baseline_years = seq(1980,1984),    
                                 
                                 # How far back to calculate "current" trend over)
-                                length_current_trend = year_goals_are_set-1980){           
+                                length_current_trend = 2022-1980){           
   
   # Extract samples
   samps <- sp_results$samps
@@ -272,22 +273,22 @@ projection_function <- function(sp_results = NULL,
   
   Prob_Exceed_StatusQuo <- 100*mean(samps_gam[,status_year_number] > samps_StatusQuo[,status_year_number]) %>% round(3)
   Prob_Exceed_Recovery <- 100*mean(samps_gam[,status_year_number] > samps_Recovery[,status_year_number]) %>% round(3)
-  Prob_Exceed_1970 <- 100*mean(samps_gam[,status_year_number] > samps_gam[,1]) %>% round(3)
+  Prob_Exceed_Baseline <- 100*mean(samps_gam[,status_year_number] > samps_gam[,1]) %>% round(3)
   
   # ---------------------------------------------------------------------
   # Calculate indices expressed as percent of baseline level
   # ---------------------------------------------------------------------
   
-  percent_of_1970_StatusQuo <- samps_StatusQuo
-  percent_of_1970_Recovery <- samps_Recovery
+  percent_of_Baseline_StatusQuo <- samps_StatusQuo
+  percent_of_Baseline_Recovery <- samps_Recovery
   
-  for (j in 1:ncol(percent_of_1970_StatusQuo)){
-    percent_of_1970_StatusQuo[,j] <- 100* percent_of_1970_StatusQuo[,j]/Index_baseline
-    percent_of_1970_Recovery[,j] <- 100* percent_of_1970_Recovery[,j]/Index_baseline
+  for (j in 1:ncol(percent_of_Baseline_StatusQuo)){
+    percent_of_Baseline_StatusQuo[,j] <- 100* percent_of_Baseline_StatusQuo[,j]/Index_baseline
+    percent_of_Baseline_Recovery[,j] <- 100* percent_of_Baseline_Recovery[,j]/Index_baseline
   }
   
-  percent_of_1970_Obs <- samps
-  for (j in 1:ncol(percent_of_1970_Obs)) percent_of_1970_Obs[,j] <- 100* percent_of_1970_Obs[,j]/Index_baseline
+  percent_of_Baseline_Obs <- samps
+  for (j in 1:ncol(percent_of_Baseline_Obs)) percent_of_Baseline_Obs[,j] <- 100* percent_of_Baseline_Obs[,j]/Index_baseline
   
   # -------------------------------
   # Relevant summaries of indices
@@ -321,7 +322,7 @@ projection_function <- function(sp_results = NULL,
               Recovery_q_0.975 = quantile(Recovery,0.975, na.rm = TRUE))
   
   # Credible intervals on estimates of percent of historical abundance
-  percent_change_summary_Obs <- reshape2::melt(percent_of_1970_Obs) %>%
+  percent_change_summary_Obs <- reshape2::melt(percent_of_Baseline_Obs) %>%
     rename(Year = year, Obs = value) %>%
     group_by(Year) %>%
     summarize(Obs_med = median(Obs),
@@ -329,7 +330,7 @@ projection_function <- function(sp_results = NULL,
               Obs_q_0.975 = quantile(Obs,0.975, na.rm = TRUE))
   
   # Credible intervals on estimates of percent change, under status quo projection
-  percent_change_summary_StatusQuo <- reshape2::melt(percent_of_1970_StatusQuo) %>%
+  percent_change_summary_StatusQuo <- reshape2::melt(percent_of_Baseline_StatusQuo) %>%
     rename(samp = Var1, year_number = Var2, StatusQuo = value) %>%
     mutate(Year = year_seq_projection[year_number]) %>%
     group_by(Year) %>%
@@ -338,13 +339,40 @@ projection_function <- function(sp_results = NULL,
               StatusQuo_q_0.975 = quantile(StatusQuo,0.975, na.rm = TRUE))
   
   # Credible intervals on estimates of percent change, under recovery projection
-  percent_change_summary_Recovery <- reshape2::melt(percent_of_1970_Recovery) %>%
+  percent_change_summary_Recovery <- reshape2::melt(percent_of_Baseline_Recovery) %>%
     rename(samp = Var1, year_number = Var2, Recovery = value) %>%
     mutate(Year = year_seq_projection[year_number]) %>%
     group_by(Year) %>%
     summarize(Recovery_med = median(Recovery),
               Recovery_q_0.025 = quantile(Recovery,0.025, na.rm = TRUE),
               Recovery_q_0.975 = quantile(Recovery,0.975, na.rm = TRUE))
+  
+  # -----------------------------------------
+  # Description of recovery progress, assuming goals are met
+  # -----------------------------------------
+  
+  Recovery_index_2050 <- subset(Recovery_summary, Year == 2050)
+  Recovery_percent_2050 <- subset(percent_change_summary_Recovery, Year == 2050)
+  
+  # Year in which full recovery is achieved
+  Year_of_full_Recovery <- apply(percent_of_Baseline_Recovery[,which(year_seq_projection > year_goals_are_set)],1,function(x) min(which(x >= 100)))
+  Year_of_full_Recovery <- year_seq_projection[year_seq_projection > year_goals_are_set][Year_of_full_Recovery] %>%
+    quantile(c(0.025,0.5,0.975))
+  
+  recovery_description <- data.frame(
+    
+    # Current status of the population (as of last survey)
+    Current_Prob_Exceed_StatusQuo = Prob_Exceed_StatusQuo,
+    Current_Prob_Exceed_Recovery = Prob_Exceed_Recovery,
+    Current_Prob_Exceed_Baseline = Prob_Exceed_Baseline,
+    
+    # Projected status of population in the future, if recovery target is met
+    Recovery_Index_2050_q0.025 = Recovery_index_2050$Recovery_q_0.025,
+    Recovery_Index_2050_q0.500 = Recovery_index_2050$Recovery_med,
+    Recovery_Index_2050_q0.975 = Recovery_index_2050$Recovery_q_0.975,
+    Year_of_Full_Recovery_q0.025 = Year_of_full_Recovery[1],
+    Year_of_Full_Recovery_q0.500 = Year_of_full_Recovery[2],
+    Year_of_Full_Recovery_q0.975 = Year_of_full_Recovery[3])
   
   return(as.list(environment()))
 }
@@ -451,7 +479,7 @@ CCSP_projection_plot <- ggplot()+
   labs(subtitle = paste0("\nCurrent Status (",CCSP_projection$final_year_of_data,"):\n\n",
                          "Exceeds status quo trajectory: ",CCSP_projection$Prob_Exceed_StatusQuo,"% chance\n",
                          "Exceeds recovery trajectory: ",CCSP_projection$Prob_Exceed_Recovery,"% chance\n",
-                         "Exceeds 1970 abundance: ",CCSP_projection$Prob_Exceed_1970,"% chance\n"))+
+                         "Exceeds 1970 abundance: ",CCSP_projection$Prob_Exceed_Baseline,"% chance\n"))+
   coord_cartesian(ylim=c(0,max(apply(CCSP_projection$samps,2,function(x) quantile(x, 0.975)))))+
   scale_x_continuous(breaks = seq(1970,CCSP_projection$end_of_projection,10))
 
@@ -472,71 +500,71 @@ The plot below illustrates this alternative way of visualizing the projections:
 ```{r CCSP_projection_plot_percent_of_baseline, echo = FALSE, cache = TRUE, warning = FALSE, message = FALSE, fig.width=8, fig.height=6}
 
 CCSP_percent_change_plot <- ggplot()+
-    
-    # Year goals were set:
-    geom_vline(xintercept = CCSP_projection$year_goals_are_set, size=2, col = "black", alpha = 0.2)+
-    geom_text(aes(x = CCSP_projection$year_goals_are_set+1, y = 0), 
-              label = "<- Year goals were set", col = "black", alpha = 0.2,
-              hjust=0, fontface = "bold", size = 2)+
-    
-    # 100%
-    geom_hline(yintercept = 100, linetype = 2)+
-    
-    
-    # Observed indices
-    geom_errorbar(data = subset(CCSP_projection$percent_change_summary_Obs,Year <= CCSP_projection$final_year_of_data), aes(x = Year, ymin = Obs_q_0.025, ymax = Obs_q_0.975), width = 0, col = "gray30")+
-    geom_point(data = subset(CCSP_projection$percent_change_summary_Obs, Year <= CCSP_projection$final_year_of_data), aes(x = Year, y = Obs_med), col = "gray30")+
-    
-    # Historical trend
-    geom_ribbon(data = subset(CCSP_projection$percent_change_summary_StatusQuo, Year <= CCSP_projection$year_goals_are_set), 
-                aes(x = Year, 
-                    ymin = StatusQuo_q_0.025, 
-                    ymax = StatusQuo_q_0.975,
-                    fill = "Historical"), alpha = 0.2)+
-    geom_line(data = subset(CCSP_projection$percent_change_summary_StatusQuo, Year <= CCSP_projection$year_goals_are_set), 
-              aes(x = Year, y = StatusQuo_med,
-                  col = "Historical"), size = 1)+
-    
-    
-    # StatusQuo
-    geom_ribbon(data = subset(CCSP_projection$percent_change_summary_StatusQuo, Year >= CCSP_projection$year_goals_are_set), 
-                aes(x = Year, 
-                    ymin = StatusQuo_q_0.025, 
-                    ymax = StatusQuo_q_0.975,
-                    fill = "Status Quo"), 
-                alpha = 0.2)+
-    geom_line(data = subset(CCSP_projection$percent_change_summary_StatusQuo, Year >= CCSP_projection$year_goals_are_set), 
-              aes(x = Year, y = StatusQuo_med, col = "Status Quo"), size = 1)+
-    
-    # Recovery
-    geom_ribbon(data = subset(CCSP_projection$percent_change_summary_Recovery, Year >= CCSP_projection$year_goals_are_set), 
-                aes(x = Year, 
-                    ymin = Recovery_q_0.025, 
-                    ymax = Recovery_q_0.975,
-                    fill = "Recovery Target"), 
-                alpha = 0.2)+
-    geom_line(data = subset(CCSP_projection$percent_change_summary_Recovery, Year >= CCSP_projection$year_goals_are_set), 
-              aes(x = Year, y = Recovery_med, col = "Recovery Target"), size = 1)+
-    
-    scale_x_continuous(breaks = seq(1970,CCSP_projection$end_of_projection,10))+
-    
-    scale_fill_manual(values=c("gray50","dodgerblue","orangered"), name = "Scenario")+
-    scale_color_manual(values=c("black","dodgerblue","orangered"), name = "Scenario")+
-    
-    ylab("Percent of Baseline abundance")+
-    xlab("Year")+
-    ggtitle(species_name)+
-    coord_cartesian(ylim=c(0,200))+
-    labs(subtitle = paste0("\nCurrent Status (",CCSP_projection$final_year_of_data,"):\n\n",
-                           "Exceeds status quo trajectory: ",CCSP_projection$Prob_Exceed_StatusQuo,"% chance\n",
-                           "Exceeds recovery trajectory: ",CCSP_projection$Prob_Exceed_Recovery,"% chance\n",
-                           "Exceeds Baseline abundance: ",CCSP_projection$Prob_Exceed_1970,"% chance\n"))+
-    theme_few()
   
-  print(CCSP_percent_change_plot)
+  # Year goals were set:
+  geom_vline(xintercept = CCSP_projection$year_goals_are_set, size=2, col = "black", alpha = 0.2)+
+  geom_text(aes(x = CCSP_projection$year_goals_are_set+1, y = 0), 
+            label = "<- Year goals were set", col = "black", alpha = 0.2,
+            hjust=0, fontface = "bold", size = 2)+
   
+  # 100%
+  geom_hline(yintercept = 100, linetype = 2)+
+  
+  
+  # Observed indices
+  geom_errorbar(data = subset(CCSP_projection$percent_change_summary_Obs,Year <= CCSP_projection$final_year_of_data), aes(x = Year, ymin = Obs_q_0.025, ymax = Obs_q_0.975), width = 0, col = "gray30")+
+  geom_point(data = subset(CCSP_projection$percent_change_summary_Obs, Year <= CCSP_projection$final_year_of_data), aes(x = Year, y = Obs_med), col = "gray30")+
+  
+  # Historical trend
+  geom_ribbon(data = subset(CCSP_projection$percent_change_summary_StatusQuo, Year <= CCSP_projection$year_goals_are_set), 
+              aes(x = Year, 
+                  ymin = StatusQuo_q_0.025, 
+                  ymax = StatusQuo_q_0.975,
+                  fill = "Historical"), alpha = 0.2)+
+  geom_line(data = subset(CCSP_projection$percent_change_summary_StatusQuo, Year <= CCSP_projection$year_goals_are_set), 
+            aes(x = Year, y = StatusQuo_med,
+                col = "Historical"), size = 1)+
+  
+  
+  # StatusQuo
+  geom_ribbon(data = subset(CCSP_projection$percent_change_summary_StatusQuo, Year >= CCSP_projection$year_goals_are_set), 
+              aes(x = Year, 
+                  ymin = StatusQuo_q_0.025, 
+                  ymax = StatusQuo_q_0.975,
+                  fill = "Status Quo"), 
+              alpha = 0.2)+
+  geom_line(data = subset(CCSP_projection$percent_change_summary_StatusQuo, Year >= CCSP_projection$year_goals_are_set), 
+            aes(x = Year, y = StatusQuo_med, col = "Status Quo"), size = 1)+
+  
+  # Recovery
+  geom_ribbon(data = subset(CCSP_projection$percent_change_summary_Recovery, Year >= CCSP_projection$year_goals_are_set), 
+              aes(x = Year, 
+                  ymin = Recovery_q_0.025, 
+                  ymax = Recovery_q_0.975,
+                  fill = "Recovery Target"), 
+              alpha = 0.2)+
+  geom_line(data = subset(CCSP_projection$percent_change_summary_Recovery, Year >= CCSP_projection$year_goals_are_set), 
+            aes(x = Year, y = Recovery_med, col = "Recovery Target"), size = 1)+
+  
+  scale_x_continuous(breaks = seq(1970,CCSP_projection$end_of_projection,10))+
+  
+  scale_fill_manual(values=c("gray50","dodgerblue","orangered"), name = "Scenario")+
+  scale_color_manual(values=c("black","dodgerblue","orangered"), name = "Scenario")+
+  
+  ylab("Percent of Baseline abundance")+
+  xlab("Year")+
+  ggtitle(species_name)+
+  coord_cartesian(ylim=c(0,200))+
+  labs(subtitle = paste0("\nCurrent Status (",CCSP_projection$final_year_of_data,"):\n\n",
+                         "Exceeds status quo trajectory: ",CCSP_projection$Prob_Exceed_StatusQuo,"% chance\n",
+                         "Exceeds recovery trajectory: ",CCSP_projection$Prob_Exceed_Recovery,"% chance\n",
+                         "Exceeds Baseline abundance: ",CCSP_projection$Prob_Exceed_Baseline,"% chance\n"))+
+  theme_few()
+
+print(CCSP_percent_change_plot)
+
 ```  
-  
+
 This framework illustrates several key messages:
 
 1) blah
@@ -546,14 +574,14 @@ This framework illustrates several key messages:
 
 # Application to all species
 
-We applied the framework to _____ species that are estimated to have experienced long-term population declines and are considered to be well-monitored by the Breeding Bird Survey.  For each species, we set population goals in 2022 (the most recent year of BBS estimates).
+We applied the framework to _____ species that are estimated to have experienced long-term population declines and are considered to be well-monitored by the Breeding Bird Survey.  For each species, we set population goals starting in 2022 (the most recent year of BBS estimates).
 
 This involved:
 
 1) Fitting Bayesian hierarchical models for each species, to estimate population trajectories and historical trends
 2) Conducting projections of population recovery, assuming population growth rates would be increased by 0.5% per year until a target growth rate of +3% per year was achieved (after which, the projection continued growing at a rate of +3% per year)
-3) Reporting the population status in 2050, if the population grew according to the projection
-4) Reporting the year in which 'full recovery' would be achieved, if the population grew according to the projection.
+3) Reporting the population status in 2050 (i.e., under the hypothetical scenario where the population grew according to the projection)
+4) Reporting the year in which 'full recovery' would be achieved (i.e., under the hypothetical scenario where the population grew according to the projection)
 
 Code to accomplish this is included below:
 
