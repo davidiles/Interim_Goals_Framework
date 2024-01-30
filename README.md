@@ -172,10 +172,10 @@ CCSP_projection <- projection_function(CCSP_results,
 
 ![](README_files/figure-markdown_github/CCSP_projection_plot-1.png)
 
-The **blue** curve represents the recovery scenario, while the **red**
-curve represents a population that continues to decline at the mean
-long-term rate observed for the population. The **gray** curve is the
-trajectory the population has actually taken.
+The **blue** curve represents the recovery scenario. The **red** curve
+represents a population that continues to decline at the mean long-term
+rate observed for the population. The **gray** curve is the trajectory
+the population has actually taken.
 
 We could also transform the plot above into a comparison to some
 historical baseline. For example, all of the data and projection curves
