@@ -102,10 +102,17 @@ on assumptions about hypothetical rates of conservation action), and
 potentially continue that trajectory until the population reaches full
 recovery.
 
-Projections are distinct from forecasts, and we are **not** making
-predictions about the future state a population will achieve. Rather, we
-are describing a path towards recovery that is potentially achievable if
-conservation action is pursued.
+Projections are distinct from forecasts, and we are **not making
+empirical predictions** about the future state a population will
+achieve. Rather, we are describing a path towards recovery that is
+potentially achievable if conservation action is pursued. Uncertainty in
+these projections is entirely driven by uncertainty about the size of
+the population in the year the goals were set, and the rate of decline
+of the species. Projections do not include uncertainty related to the
+deployment or efficacy of future conservation action. We are describing
+scenarios in form of: *IF* conservation action results in a particular
+pattern of change in population growth rates, *THEN* we expect
+populations to recover at a particular rate.
 
 Population projections require several key inputs:
 
@@ -158,7 +165,7 @@ CCSP_projection <- projection_function(CCSP_results,
                                        baseline_years = c(1980,1981,1982,1983,1984),    
                                        
                                        # How far back to calculate "current" trend over)
-                                       length_current_trend = 2010-1980,
+                                       length_current_trend = 30, # 30 year trend
                                        
                                        # Year in which goals were set
                                        year_goals_are_set = 2010,
@@ -197,9 +204,18 @@ projections:
 
 This framework illustrates several key messages:
 
-1.  blah
-2.  blah
+1.  Currently, the national population of Clay-colored Sparrow is almost
+    certainly below the recovery target that was set for it as of 2010
+    (\>99.9% chance). Moreover, the current population estimate is
+    currently even lower than if the population had continued to decline
+    at its long-term rate. This implies that since 2010, the population
+    has declined more rapidly than its long-term mean rate of change.
+
+2.  If recovery targets are met, in the year 2050 the population would
+    be 157.8% of its baseline abundance (95% CRI = 140.2 to 176.4%).
+
 3.  blah
+
 4.  blah
 
 # Application to all species
