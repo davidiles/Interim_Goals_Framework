@@ -108,11 +108,13 @@ achieve. Rather, we are describing a path towards recovery that is
 potentially achievable if conservation action is pursued. Uncertainty in
 these projections is entirely driven by uncertainty about the size of
 the population in the year the goals were set, and the rate of decline
-of the species. Projections do not include uncertainty related to the
-deployment or efficacy of future conservation action. We are describing
-scenarios in form of: *IF* conservation action results in a particular
-pattern of change in population growth rates, *THEN* we expect
-populations to recover at a particular rate.
+of the species.
+
+Projections do not include uncertainty related to the deployment or
+efficacy of future conservation action. Projections are if/then
+statements: **IF** conservation action results in a specific pattern of
+change in population growth rates, **THEN** we expect populations to
+achieve “recovery” in \_\_\_\_\_\_ years.
 
 Population projections require several key inputs:
 
@@ -173,8 +175,8 @@ CCSP_projection <- projection_function(CCSP_results,
                                        # Percent change per year once population reaches its target growth rate
                                        target_trend = 3,    
                                        
-                                       # Years until target growth rate is reached, starting in the year goals are set
-                                       years_to_target_trend = 25,
+                                       # Goal is to increase growth rate by 0.5% per year, until target it reached
+                                       annual_growth_rate_improvement = 0.5,
                                        
                                        # Final year of projection
                                        end_of_projection = 2050
@@ -212,11 +214,10 @@ This framework illustrates several key messages:
     has declined more rapidly than its long-term mean rate of change.
 
 2.  If recovery targets are met, in the year 2050 the population would
-    be 157.8% of its baseline abundance (95% CRI = 140.2 to 176.4%).
+    be at 221.2% of its baseline abundance (95% CRI = 198.9 to 244%).
 
-3.  blah
-
-4.  blah
+3.  If the recovery target is met, we expect the population to achieve
+    “full recovery” in the year 2024 (95% CRI = 2020 to 2027).
 
 # Application to all species
 
@@ -241,9 +242,74 @@ This involved:
     under the hypothetical scenario where the population grew according
     to the projection)
 
-Code to accomplish this is included below:
+Code to accomplish this is shown below:
+
+``` r
+
+target_species <- read_xlsx("data/species with long term declines (12dec2023).xlsx")
+
+for (species_name in target_species$Species){
+  
+  # 4 letter species abbreviation code
+  sp_code <- subset(ac, English_Name == species_name)$Species_ID
+  
+  # Directory where fitted model will be stored 
+  filename <- paste0("fitted_models/",sp_code,".RDS")
+  
+  # Fit model for this species, save resulting indices
+  if (!file.exists(filename)){
+    
+    # Stratify data
+    s <- stratify(by = "bbs_usgs", species = species_name)
+    
+    p <- tryCatch(expr = {prepare_data(s)},
+                  error = function(e){NULL})
+    
+    # Fit model & generate indices
+    if (is.null(p)) next
+    p <- prepare_data(s)
+    md <- prepare_model(p, model = "gamye")
+    m <- run_model(md, save_model = FALSE)
+    i <- generate_indices(model_output = m, regions = "country")
+    
+    # National indices
+    samps <- i$samples$country_Canada
+    
+    # Save results
+    sp_results <- list(samps = samps)
+    saveRDS(sp_results, file = filename)
+    
+    # Generate projections
+    
+    CCSP_projection <- projection_function(
+      
+      sp_results,
+      
+      # Years for calculating baseline index for 'full recovery' (average across these years)
+      baseline_years = c(1980,1981,1982,1983,1984),    
+      
+      # How far back to calculate "current" trend over)
+      length_current_trend = 30, # 30 year trend
+      
+      # Year in which goals were set
+      year_goals_are_set = 2022,
+      
+      # Percent change per year once population reaches its target growth rate
+      target_trend = 3,    
+      
+      # Goal is to increase growth rate by 0.5% per year, until target it reached
+      annual_growth_rate_improvement = 0.5,
+      
+      # Final year of projection
+      end_of_projection = 2100
+    )
+  }
+}
+```
 
 # Results summary
+
+Projections for each species are plotted below:
 
 # Extensions
 
