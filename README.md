@@ -25,12 +25,11 @@ For each species that has experienced long-term population declines, we
 construct two projection curves that represent alternative future
 pathways populations could take:
 
-1.  population declines continue at the same average rate as in the
+1.  population declines continue at the same mean annual rate as in the
     past, or
 
-2.  populations achieve a specified positive population growth at a
-    specified point in the future, where the curve is chosen to
-    represent a plausible and achievable trajectory towards recovery.
+2.  populations achieve a specified target population growth at a
+    specified point in the future, resulting in a “recovery curve”
 
 As new monitoring data is collected in the future, progress towards
 recovery can be measured by compared the observed population trajectory
@@ -91,16 +90,18 @@ Below, we plot the annual population indices for the species:
 ### Population projections
 
 For each species, we construct projections of hypothetical trajectories
-that represent optimistic but achievable scenarios of population
-recovery. The projections begin with the **current** rate of long-term
-population decline, achieve a **target** population growth rate after a
-defined number of years, and potentially continue that trajectory until
-the population reaches full recovery.
+that represent optimistic but potentially achievable scenarios of
+population recovery. The projections begin with the **current** rate of
+long-term population decline (estimated from empirical data), achieve a
+**target** population growth rate after a defined number of years (based
+on assumptions about hypothetical rates of conservation action), and
+potentially continue that trajectory until the population reaches full
+recovery.
 
 Projections are distinct from forecasts, and we are **not** making
-predictions about the future state a population will likely achieve.
-Rather, we are describing a path towards recovery that is potentially
-achievable if conservation action is pursued.
+predictions about the future state a population will achieve. Rather, we
+are describing a path towards recovery that is potentially achievable if
+conservation action is pursued.
 
 Population projections require several key inputs:
 
@@ -115,18 +116,99 @@ Population projections require several key inputs:
 
 2.  **Year in which goals are set**: This is the date at which the
     projection ‘begins’. After this date, progress towards recovery will
-    be evaluated. In these projections, we set goals in 2022.
+    be evaluated. In these projections, we set goals in 2022. However,
+    to illustrate the way in which these projections would be used, we
+    can create hypothetical scenarios in which goals would have been set
+    in 2010, and progress was subsequently monitored.
 
 3.  **Target population trend**: We set a goal of achieving annual
-    population growth rates of **+3% per year**. This is within the
-    range of biologically possible growth rates for all species
-    considered, and is also within the range of observed growth rates
-    for species that have experienced long-term population increases.
+    population growth rates of **+3% per year** at a specific year in
+    the future (see below). This is within the range of biologically
+    possible growth rates for all species considered, and is also within
+    the range of observed growth rates for species that have experienced
+    long-term population increases.
 
 4.  **Years until target growth rate is achieved**: This relates to the
     speed at which conservation action is expected to occur, under an
-    optimistic conservation scenario. We set an aspirational goal of
-    achieving target growth rates (+3% per year) in 25 years (2045).
+    optimistic conservation scenario. By default, we set a goal of
+    increasing annual growth rates by +0.5% per year, until the target
+    growth rate (+3% per year) is achieved. For species with highly
+    negative current growth rates, it will therefore take longer to
+    reach the +3% growth rate target.
+
+Below, we illustrate a population projection for Clay-colored Sparrow.
+For illustrative purposes, we imagine that in 2010 a goal was set to
+increase population growth rate by +0.5% per year, until a growth rate
+of +3% per year was achieved. We plot the resulting “recovery
+projection”, and track progress towards that goal by comparing the
+empirical population indices (from 2011 to 2022) against the projection.
+
+The code below accomplishes this projection, using a custom R function
+called `projection_function`:
+
+``` r
+
+CCSP_projection <- projection_function(sp_results,
+                                       
+                                       # Years for calculating baseline index for 'full recovery' (average across these years)
+                                       baseline_years = c(1980,1981,1982,1983,1984),    
+                                       
+                                       # How far back to calculate "current" trend over)
+                                       length_current_trend = 2010-1980,
+                                       
+                                       # Year in which goals were set
+                                       year_goals_are_set = 2010,
+                                       
+                                       # Percent change per year once population reaches its target growth rate
+                                       target_trend = 3,    
+                                       
+                                       # Years until target growth rate is reached, starting in the year goals are set
+                                       years_to_target_trend = 25,
+                                       
+                                       # Final year of projection
+                                       end_of_projection = 2050
+)
+```
+
+``` r
+
+CCSP_projection_plot <- ggplot()+
+  
+  geom_vline(xintercept = CCSP_projection$year_goals_are_set, size=2, col = "black", alpha = 0.2)+
+  geom_text(aes(x = CCSP_projection$year_goals_are_set+1, y = 0.01), 
+            label = "<- Year goals were set", col = "black", alpha = 0.2,
+            hjust=0, fontface = "bold", size = 2)+
+  
+  geom_ribbon(data = CCSP_projection$StatusQuo_summary, aes(x = Year, ymin = StatusQuo_q_0.025, ymax = StatusQuo_q_0.975), alpha = 0.2, fill = "orangered")+
+  geom_line(data = CCSP_projection$StatusQuo_summary, aes(x = Year, y = StatusQuo_med), col = "orangered", linewidth = 1)+
+  
+  geom_ribbon(data = subset(CCSP_projection$Recovery_summary, Year >= CCSP_projection$year_goals_are_set), aes(x = Year, ymin = Recovery_q_0.025, ymax = Recovery_q_0.975), alpha = 0.2, fill = "dodgerblue")+
+  geom_line(data = subset(CCSP_projection$Recovery_summary, Year >= CCSP_projection$year_goals_are_set), aes(x = Year, y = Recovery_med), col = "dodgerblue", linewidth = 1)+
+  
+  geom_ribbon(data = CCSP_projection$gam_summary, aes(x = Year, ymin = gam_q_0.025, ymax = gam_q_0.975), alpha = 0.4, fill = "gray50")+
+  geom_line(data = CCSP_projection$gam_summary, aes(x = Year, y = gam_med), col = "gray50", linewidth = 1)+
+  
+  # Observed indices
+  geom_errorbar(data = subset(CCSP_projection$indices_summarized, Year >= 1970 & Year <= CCSP_projection$final_year_of_data),aes(x = Year, ymin = Index_q_0.025, ymax = Index_q_0.975), width = 0, col = "gray30")+
+  geom_point(data = subset(CCSP_projection$indices_summarized, Year >= 1970  & Year <= CCSP_projection$final_year_of_data),aes(x = Year, y = Index), col = "gray30")+
+  
+  ylab("Population Index")+
+  xlab("Year")+
+  theme_few()+
+  ggtitle(species_name)+
+  labs(subtitle = paste0("\nCurrent Status (",CCSP_projection$final_year_of_data,"):\n\n",
+                         "Exceeds status quo trajectory: ",CCSP_projection$Prob_Exceed_StatusQuo,"% chance\n",
+                         "Exceeds recovery trajectory: ",CCSP_projection$Prob_Exceed_Recovery,"% chance\n",
+                         "Exceeds 1970 abundance: ",CCSP_projection$Prob_Exceed_1970,"% chance\n"))+
+  coord_cartesian(ylim=c(0,max(apply(CCSP_projection$samps,2,function(x) quantile(x, 0.975)))))+
+  scale_x_continuous(breaks = seq(1970,CCSP_projection$end_of_projection,10))
+
+print(CCSP_projection_plot)
+```
+
+![](README_files/figure-markdown_github/CCSP_projection_plot-1.png)
+
+The <span style="color:blue">some *blue* text</span>
 
 Annual population indices can also be expressed as a percentage of a
 historical baseline abundance. For the BBS, estimated indices prior to
