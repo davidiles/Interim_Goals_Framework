@@ -37,6 +37,10 @@ to the projections.
 
 # Method description & case study
 
+A stand-alone script to run these analyses is provided as
+`projection.R`. The remainder of this document explains the rationale
+and steps within that script in more detail.
+
 ### Historical trajectory and population trend
 
 We start by fitting a population model to monitoring data for a focal
@@ -280,8 +284,7 @@ for (species_name in target_species$Species){
     saveRDS(sp_results, file = filename)
     
     # Generate projections
-    
-    CCSP_projection <- projection_function(
+    sp_projection <- projection_function(
       
       sp_results,
       
@@ -309,7 +312,11 @@ for (species_name in target_species$Species){
 
 # Results summary
 
-Projections for each species are plotted below:
+Tabular summaries of population projection results are stored in
+**/summary_tables/projection_table.csv**.
+
+Plots of projections for each species are stored in
+**/summary_figures/**:
 
 # Extensions
 

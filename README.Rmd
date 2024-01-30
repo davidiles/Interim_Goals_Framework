@@ -48,7 +48,7 @@ As new monitoring data is collected in the future, progress towards recovery can
 
 # Method description & case study
 
-A stand-alone script to run these analyses is provided as `r projection.R`.  The remainder of this document explains the rationale and steps within that script in more detail.
+A stand-alone script to run these analyses is provided as `projection.R`.  The remainder of this document explains the rationale and steps within that script in more detail.
 
 ```{r load_libs_data_functions, echo = FALSE, results = 'hide', cache=TRUE}
 
@@ -672,13 +672,15 @@ for (species_name in target_species$Species){
 
 ```
 
-# Results summary
+# Results summaries
+
+A full set of results were produced by the script `projection.R`.
 
 Tabular summaries of population projection results are stored in **/summary_tables/projection_table.csv**.
 
 Plots of projections for each species are stored in **/summary_figures/**:
 
-```{r species_projections_run, eval = TRUE, echo = FALSE, warnings = FALSE, messages = FALSE}
+```{r species_projections_run, eval = FALSE, echo = FALSE, warnings = FALSE, messages = FALSE}
 
 target_species <- read_xlsx("data/species with long term declines (12dec2023).xlsx")
 
@@ -842,15 +844,6 @@ for (species_name in target_species$Species){
 write.csv(sp_table,file = "./results_summary/projection_table.csv",row.names = FALSE)
 
 ```
-
-```{r species_plots}
-
-for (i in 1:length(sp_plots)) print(sp_plots[[i]]$percent_change)
-
-```
-
-
-
 
 # Extensions
 
