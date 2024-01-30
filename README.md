@@ -90,6 +90,8 @@ Below, we plot the annual population indices for the species:
 
 Population projections require several key inputs:
 
+#### Current status and trend
+
 1.  **Historical trend**: An estimate of historical population trend,
     which describes the average rate of population change populations
     have experienced over the ‘long-term’. This is calculated directly
@@ -103,17 +105,18 @@ Population projections require several key inputs:
     projection ‘begins’. After this date, progress towards recovery will
     be evaluated. In these projections, we set goals in 2022.
 
-3.  **Target population trend**: We set a goal of achieving annual
-    population growth rates of **+3% per year**. This is well within the
-    range of biologically possible growth rates for all species
-    considered, and is also within the range of observed rates of
-    increase for species that have experienced long-term population
-    increases.
+#### Target trend
 
-4.  **Years until target growth rate is achieved**: This relates to the
-    speed at which conservation action is expected to occur. We set an
-    aspirational goal of achieving target growth rates in 25 years
-    (2045).
+1.  **Target population trend**: We set a goal of achieving annual
+    population growth rates of **+3% per year**. This is within the
+    range of biologically possible growth rates for all species
+    considered, and is also within the range of observed growth rates
+    for species that have experienced long-term population increases.
+
+2.  **Years until target growth rate is achieved**: This relates to the
+    speed at which conservation action is expected to occur, under an
+    optimistic conservation scenario. We set an aspirational goal of
+    achieving target growth rates (+3% per year) in 25 years (2045).
 
 Annual population indices can also be expressed as a percentage of a
 historical baseline abundance. For the BBS, estimated indices prior to
