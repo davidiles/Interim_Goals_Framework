@@ -38,7 +38,7 @@ to the projections.
 
 # Method description & case study
 
-#### Historical trajectory and population trend
+### Historical trajectory and population trend
 
 We start by fitting a population model to monitoring data for a focal
 species. We accomplish this using the `bbsBayes2` R package for species
