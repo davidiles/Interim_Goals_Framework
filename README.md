@@ -148,7 +148,7 @@ called `projection_function`:
 
 ``` r
 
-CCSP_projection <- projection_function(sp_results,
+CCSP_projection <- projection_function(CCSP_results,
                                        
                                        # Years for calculating baseline index for 'full recovery' (average across these years)
                                        baseline_years = c(1980,1981,1982,1983,1984),    
@@ -174,7 +174,8 @@ CCSP_projection <- projection_function(sp_results,
 
 The **blue** curve represents the recovery scenario, while the **red**
 curve represents a population that continues to decline at the mean
-long-term rate observed for the population.
+long-term rate observed for the population. The **gray** curve is the
+trajectory the population has actually taken.
 
 We could also transform the plot above into a comparison to some
 historical baseline. For example, all of the data and projection curves
