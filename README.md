@@ -38,6 +38,8 @@ to the projections.
 
 # Method description & case study
 
+#### Historical trajectory and population trend
+
 We start by fitting a population model to monitoring data for a focal
 species. We accomplish this using the `bbsBayes2` R package for species
 monitored by the North American Breeding Bird Survey. We fit the ‘gamye’
@@ -88,9 +90,19 @@ Below, we plot the annual population indices for the species:
 
 ### Population projections
 
-Population projections require several key inputs:
+Starting in the year 2022, we set population goals that would lead each
+population towards recovery. Our analysis involves projecting
+hypothetical population trajectories forward in time, starting at the
+**current** rate of long-term population decline, ending in a **target**
+population growth rate after a defined number of years, and potentially
+continuing that trajectory until the population reaches full recovery.
 
-#### Current status and trend
+Projections are distinct from forecasts, and we do are not making
+predictions about the future state a population will likely achieve.
+Rather, we are describing an path towards recovery that we feel is
+reasonable, and which conservation actions should aim to achieve.
+
+Population projections require several key inputs:
 
 1.  **Historical trend**: An estimate of historical population trend,
     which describes the average rate of population change populations
@@ -105,15 +117,13 @@ Population projections require several key inputs:
     projection ‘begins’. After this date, progress towards recovery will
     be evaluated. In these projections, we set goals in 2022.
 
-#### Target trend
-
-1.  **Target population trend**: We set a goal of achieving annual
+3.  **Target population trend**: We set a goal of achieving annual
     population growth rates of **+3% per year**. This is within the
     range of biologically possible growth rates for all species
     considered, and is also within the range of observed growth rates
     for species that have experienced long-term population increases.
 
-2.  **Years until target growth rate is achieved**: This relates to the
+4.  **Years until target growth rate is achieved**: This relates to the
     speed at which conservation action is expected to occur, under an
     optimistic conservation scenario. We set an aspirational goal of
     achieving target growth rates (+3% per year) in 25 years (2045).
