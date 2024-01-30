@@ -179,16 +179,19 @@ the mean long-term rate observed for the population.
 
 The **gray** curve is the trajectory the population has actually taken.
 
-We could also transform the plot above into a comparison to some
-historical baseline. For example, all of the data and projection curves
-could be expressed *relative* to a historical baseline population index.
-In this case, we use the mean population index from 1980-1984 as a
-baseline abundance which would represent “full recovery” of the species.
-The plot below illustrates this:
+All of the data and projection curves could be expressed *relative* to a
+historical baseline population index. In this case, we use the mean
+population index from 1980-1984 as a baseline abundance which would
+represent “full recovery” of the species. Nothing has changed in terms
+of the model inputs, assumptions, or outputs; this is just a different
+way of graphically visualizing the projections.
+
+The plot below illustrates this alternative way of visualizing the
+projections:
 
 ![](README_files/figure-markdown_github/CCSP_projection_plot_percent_of_baseline-1.png)
 
-This illustrates several key messages:
+This framework illustrates several key messages:
 
 1.  blah
 2.  blah
@@ -197,11 +200,40 @@ This illustrates several key messages:
 
 # Application to all species
 
+We applied the framework to \_\_\_\_\_ species that are estimated to
+have experienced long-term population declines and are considered to be
+well-monitored by the Breeding Bird Survey. For each species, we set
+population goals in 2022 (the most recent year of BBS estimates).
+
+This involved:
+
+1.  Fitting Bayesian hierarchical models for each species, to estimate
+    population trajectories and historical trends
+2.  Conducting projections of population recovery, assuming population
+    growth rates would be increased by 0.5% per year until a target
+    growth rate of +3% per year was achieved (after which, the
+    projection continued growing at a rate of +3% per year)
+3.  Reporting the population status in 2050, if the population grew
+    according to the projection
+4.  Reporting the year in which ‘full recovery’ would be achieved, if
+    the population grew according to the projection.
+
+Code to accomplish this is included below:
+
 # Results summary
 
-# R code
+# Extensions
 
-The R code below was used to conduct analyses for all species.
+This framework can be applied to species that are monitored by other
+programs than the BBS (e.g., for species better-monitored by the
+Christmas Bird Count, migration monitoring, targeted surveys, etc). To
+fully propagate uncertainty in projections, the framework requires a
+time series of population estimates with uncertainty represented by a
+collection of samples from a joint Bayesian posterior. For species that
+are not modeled using Bayesian methods, bootstrapping can be used to
+construct a collection of population time series (which represent
+uncertainty in the empirical estimates of how populations have changed
+over time).
 
 ## Citations
 
