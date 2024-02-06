@@ -684,18 +684,19 @@ Plots of projections for each species are stored in **/summary_figures/**.
 
 target_species <- read_xlsx("data/species with long term declines (12dec2023).xlsx")
 
-sp_plots <- list()
 sp_table <- data.frame()
 
 for (species_name in target_species$Species){
+  
   print(species_name)
+  
   # 4 letter species abbreviation code
   sp_code <- subset(ac, English_Name == species_name)$Species_ID
   
   # Directory where fitted model will be stored 
   filename <- paste0("fitted_models/",sp_code,".RDS")
   
-  # Fit model for this species, save resulting indices
+  # Load fitted model for this species, save resulting indices
   if (file.exists(filename)){
     
     # Load fitted models
@@ -845,9 +846,17 @@ write.csv(sp_table,file = "./results_summary/projection_table.csv",row.names = F
 
 ```
 
+
 # Extensions
 
 This framework can be applied to species that are monitored by other programs than the BBS (e.g., for species better-monitored by the Christmas Bird Count, migration monitoring, targeted surveys, etc).  To fully propagate uncertainty in projections, the framework requires a time series of population estimates with uncertainty represented by a collection of samples from a joint Bayesian posterior.  For species that are not modeled using Bayesian methods, bootstrapping can be used to construct a collection of population time series (which represent uncertainty in the empirical estimates of how populations have changed over time).
+
+# Notes for Dave
+
+Illustrations that using short-term trends could be misleading.  Short-term changes should be contextualized in terms of long-term trends.
+
+Clay-colored Sparrow - cyclic pattern
+Eastern Kingbird - recent positive trend (need for using long-term trend?)
 
 ## Citations
 
