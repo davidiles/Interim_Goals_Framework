@@ -527,6 +527,7 @@ for (species_name in target_species$Species){
     coord_cartesian(ylim=c(0,max(apply(sp_projection$indices,2,function(x) quantile(x, 0.975)))),
                     xlim=c(1970,2050))+
     scale_x_continuous(breaks = seq(1970,sp_projection$end_of_projection,10))
+  print(sp_plot_index)
   
   # Save plot
   png(paste0("./summary_figures/Indices_",sp_code,".png"), units = "in", width = 8, height = 5, res = 600)
@@ -598,14 +599,12 @@ for (species_name in target_species$Species){
                            "Exceeds recovery trajectory: ",sp_projection$Prob_Exceed_Recovery,"% chance\n",
                            "Exceeds Baseline abundance: ",sp_projection$Prob_Exceed_Baseline,"% chance\n"))+
     theme_few()
-  
   print(sp_plot_percent_change)
   
   # Save plot
   png(paste0("./summary_figures/Percent_Change_",sp_code,".png"), units = "in", width = 8, height = 5, res = 600)
   print(sp_plot_percent_change)
   dev.off()
-  
   
 }
 
