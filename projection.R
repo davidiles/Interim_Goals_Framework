@@ -494,6 +494,14 @@ for (species_name in target_species$Species){
               label = "<- Year goals were set", col = "black", alpha = 0.2,
               hjust=0, fontface = "bold", size = 2)+
     
+    # Observed indices
+    geom_errorbar(data = subset(sp_projection$indices_summarized, Year <= sp_projection$final_year_of_data),aes(x = Year, ymin = Index_q_0.025, ymax = Index_q_0.975), width = 0, col = "gray30")+
+    geom_point(data = subset(sp_projection$indices_summarized, Year <= sp_projection$final_year_of_data),aes(x = Year, y = Index), col = "gray30")+
+    
+    # gam smooth
+    geom_ribbon(data = sp_projection$gam_summary, aes(x = Year, ymin = gam_q_0.025, ymax = gam_q_0.975), alpha = 0.4, fill = "gray50")+
+    geom_line(data = sp_projection$gam_summary, aes(x = Year, y = gam_med), col = "gray50", linewidth = 1)+
+    
     # Historical "trend" line
     geom_ribbon(data = subset(sp_projection$StatusQuo_summary, Year <= sp_projection$year_goals_are_set), aes(x = Year, ymin = StatusQuo_q_0.025, ymax = StatusQuo_q_0.975), alpha = 0.2, fill = "black")+
     geom_line(data = subset(sp_projection$StatusQuo_summary, Year <= sp_projection$year_goals_are_set), aes(x = Year, y = StatusQuo_med), col = "black", linewidth = 1)+
@@ -505,13 +513,6 @@ for (species_name in target_species$Species){
     # Recovery projection
     geom_ribbon(data = subset(sp_projection$Recovery_summary, Year >= sp_projection$year_goals_are_set), aes(x = Year, ymin = Recovery_q_0.025, ymax = Recovery_q_0.975), alpha = 0.2, fill = "dodgerblue")+
     geom_line(data = subset(sp_projection$Recovery_summary, Year >= sp_projection$year_goals_are_set), aes(x = Year, y = Recovery_med), col = "dodgerblue", linewidth = 1)+
-    
-    geom_ribbon(data = sp_projection$gam_summary, aes(x = Year, ymin = gam_q_0.025, ymax = gam_q_0.975), alpha = 0.4, fill = "gray50")+
-    geom_line(data = sp_projection$gam_summary, aes(x = Year, y = gam_med), col = "gray50", linewidth = 1)+
-    
-    # Observed indices
-    geom_errorbar(data = subset(sp_projection$indices_summarized, Year <= sp_projection$final_year_of_data),aes(x = Year, ymin = Index_q_0.025, ymax = Index_q_0.975), width = 0, col = "gray30")+
-    geom_point(data = subset(sp_projection$indices_summarized, Year <= sp_projection$final_year_of_data),aes(x = Year, y = Index), col = "gray30")+
     
     # Labels and theme
     ylab("Population Index")+
