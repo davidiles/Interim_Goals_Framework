@@ -257,14 +257,6 @@ projection_function <- function(
   # ******************************************************************
   
   # ----------------------------------------------------
-  # Round estimates/projections to 3 decimal places
-  # ----------------------------------------------------
-  
-  indices_gam <- round(indices_gam,3)
-  indices_StatusQuo <- round(indices_StatusQuo,3)
-  indices_Recovery <- round(indices_Recovery,3)
-  
-  # ----------------------------------------------------
   # Summarize indices each year
   # ----------------------------------------------------
   
@@ -432,17 +424,29 @@ for (species_name in target_species$Species){
   # 4 letter species abbreviation code
   sp_code <- subset(ac, English_Name == species_name)$Species_ID
   
-  # File where annual national indices are stored
-  filename <- paste0("fitted_models/",sp_code,".RDS")
+  # -------------------------------------------------------
+  # Read in time series of species indices
+  # - these can be either:
+  #         a single vector (if there is no measure of uncertainty available)
+  #         a matrix (ncol = nyears, nrow = nsamples from posterior)
+  # -------------------------------------------------------
   
-  # Skip species if estimates are unavailable
-  if (!file.exists(filename)) next
-  
-  # Load fitted model results
-  sp_results <- readRDS(filename)
-  
-  # Annual indices for the species
-  species_indices <- sp_results$samps
+  # -------------------------------------------------------
+  # Alternative code to read in full bayesian posterior
+  # -------------------------------------------------------
+  # 
+  # # File where annual national indices are stored
+  # filename <- paste0("fitted_models/",sp_code,".RDS")
+  # 
+  # # Skip species if estimates are unavailable
+  # if (!file.exists(filename)) next
+  # 
+  # # Load fitted model results
+  # sp_results <- readRDS(filename)
+  # 
+  # # Annual indices for the species
+  # species_indices <- sp_results$samps
+  # -------------------------------------------------------
   
   # How far back to calculate trend over?
   start_year_for_trend <- subset(target_species, Species == species_name)$StartDate
